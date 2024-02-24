@@ -375,28 +375,15 @@ def parse_package(content: str) -> List[Package]:
     return packages
 
 
-def package_difference_deleted(first: List[Package], second: List[Package]) -> List[Package]:
-    deleted_packages: List[Package] = []
+def package_difference_diff(first: List[Package], second: List[Package]) -> List[Package]:
+    diff_packages: List[Package] = []
     second_name_to_package: Dict[str, Package] = {}
+
     for it in second:
         assert it.package not in second_name_to_package, f'Duplicate package {it.package}'
         second_name_to_package[it.package] = it
     for it in first:
         if it.package not in second_name_to_package:
-            deleted_packages.append(it)
+            diff_packages.append(it)
 
-    return deleted_packages
-
-
-# TODO
-def package_difference_new(first: List[Package], second: List[Package]) -> List[Package]:
-    new_packages: List[Package] = []
-    second_name_to_package: Dict[str, Package] = {}
-    for it in second:
-        assert it.package not in second_name_to_package, f'Duplicate package {it.package}'
-        second_name_to_package[it.package] = it
-    for it in first:
-        if it.package not in second_name_to_package:
-            deleted_packages.append(it)
-
-    return deleted_packages
+    return diff_packages

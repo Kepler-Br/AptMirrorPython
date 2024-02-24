@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from packages import parse_package, Package, package_difference_deleted
+from packages import parse_package, Package, package_difference_diff
 
 
 class PackageTests(TestCase):
@@ -16,9 +16,26 @@ class PackageTests(TestCase):
             Package(package='foo', version='1.0.0', architecture='amd64', filename='pool/main/foo.deb', size=123,
                     hashes={}),
         ]
-        diff = package_difference_deleted(first_packages, second_packages)
+        deleted_packages = package_difference_diff(first_packages, second_packages)
 
-        self.assertListEqual([deleted_package], diff)
+        self.assertListEqual([deleted_package], deleted_packages)
+
+    def test_package_difference_new(self):
+        new_package = Package(package='foo2', version='1.0.0', architecture='amd64', filename='pool/main/foo2.deb',
+                              size=123, hashes={})
+        first_packages = [
+            Package(package='foo', version='1.0.0', architecture='amd64', filename='pool/main/foo.deb', size=123,
+                    hashes={}),
+        ]
+        second_packages = [
+            Package(package='foo', version='1.0.0', architecture='amd64', filename='pool/main/foo.deb', size=123,
+                    hashes={}),
+            new_package,
+        ]
+
+        new_packages = package_difference_diff(second_packages, first_packages)
+
+        self.assertListEqual([new_package], new_packages)
 
     def test_package_parsed_full(self):
         with open('test_data/Packages', 'r') as fp:
